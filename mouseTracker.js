@@ -14,14 +14,16 @@ window.MouseTracker.prototype = {
 				// заполняются при инициализации
 				cellSize:       null,
 				cellsCountPerX: null,
-				cellsCountPerY: null,
-				userPhone:      ''
+				cellsCountPerY: null
 			}
 		},
-		// интервал отправки запросов к серверу, ms
+		// Интервал отправки запросов к серверу, ms
 		queryInterval:  2000,
 		// Размер ячейки, px
-		cellSize: 50
+		cellSize: 50,
+		
+		// Функция, выполяемая по наведению на ячейку
+		onTrack: function (cell) {}
 	},
 	
 	
@@ -56,7 +58,7 @@ window.MouseTracker.prototype = {
 			$(document).off('mousemove', this._tracker);
 		}
 		if (this._interval) {
-			window.removeInterval(this.interval);
+			window.clearInterval(this.interval);
 		}
 		
 		window._log('MouseTracker stopped');
@@ -90,6 +92,8 @@ window.MouseTracker.prototype = {
 		}
 		
 		window._log(this._cellsIntervals[this._cellsIntervals.length - 1]);
+		
+		this.options.onTrack(this._cellsIntervals[this._cellsIntervals.length - 1]);
 	},
 	
 	
@@ -122,8 +126,7 @@ window.MouseTracker.prototype = {
 		$.extend(this.options.queryData.data, {
 			cellSize:       this.options.cellSize,
 			cellsCountPerX: lastCellPosition.x + 1,
-			cellsCountPerY: lastCellPosition.y + 1,
-			userPhone:      $('#phone').text()
+			cellsCountPerY: lastCellPosition.y + 1
 		});
 	},
 	
@@ -136,7 +139,6 @@ window.MouseTracker.prototype = {
 		cellSize: 100,
 		cellsCountPerX: 12,
 		cellsCountPerY: 8,
-		userPhone: '',
 		createdAt: "2013-04-15T15:20:35Z",
 		cellsIntervals: [
 			{

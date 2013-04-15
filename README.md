@@ -22,7 +22,10 @@ window.DEBUG = true;
 	queryInterval: 1000,
 	
 	// Размер ячейки, px
-	cellSize: 50
+	cellSize: 50,
+
+	// Функция, выполяемая по наведению на ячейку
+	onTrack: function (cell) {}
 	
 })).start();
 </pre>

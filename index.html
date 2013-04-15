@@ -6,26 +6,147 @@
 		<script type="text/javascript" src="lib/log.js"></script>
 		<script type="text/javascript" src="lib/json2.js"></script>
 		<script type="text/javascript" src="mouseTracker.js"></script>
+		<meta charset="utf-8">
+		
+		<style>
+			.options-panel {
+				position:    absolute;
+				left:        50%;
+				top:         190px;
+				margin-left: -100px;
+				width:       200px;
+			}
+			.options-panel input {
+				width:         100%;
+				padding:       5px 8px;
+				font-size:     18px;
+				margin-bottom: 9px;
+				border-radius: 3px;
+				box-shadow:    2px 2px 2px #ddd inset;
+				border:        1px solid #ccc;
+			}
+			.options-panel button {
+				width:     100%;
+				font-size: 18px;
+			}
+			[hidden] {
+				display: none;
+			}
+			.horisontal-line {
+				position:   absolute;
+				left:       0;
+				height:     1px;
+				/* not for IE */
+				right:      0;
+				background: #ccc;
+			}
+			.vertical-line {
+				position:   absolute;
+				top:        0;
+				width:      1px;
+				/* not for IE */
+				bottom:     0;
+				background: #ccc;
+			}
+			.active-cell {
+				position:   absolute;
+				background: #555;
+			}
+		</style>
 	</head> 
 	<body>
+	
+		<div class="options-panel">
+			<input type="text" name="userPhone" value="+380" /><br />
+			<button class="tracker-stop" hidden>
+				Остановить
+			</button>
+			<button class="tracker-start">
+				Запустить
+			</button>
+		</div>
+		
 		<script type="text/javascript">
-			window.DEBUG = true;
+			$(function () {
 			
-			(new MouseTracker({
-				// ��������� ������� � �������
-				queryData: {
-					url: 'http://localhost/',
-					type: 'post',
-					data: {}
-				},
+				// ==================================
+				// Переменные
+				var i;
+				var $optionsPanel = $('.options-panel');
+				window.DEBUG = true;
 				
-				// �������� �������� �������� � �������, ms
-				queryInterval: 1000,
 				
-				// ������ ������, px
-				cellSize: 50
+				// ==================================
+				// Показ выбранной ячейки
+				var renderActiveCell = function (cell) {
+					$('.active-cell').remove();
+					$optionsPanel.before($('<div class="active-cell">').css({
+						left:   (cell.x * tracker.options.cellSize) + 'px',
+						top:    (cell.y * tracker.options.cellSize) + 'px',
+						width:  tracker.options.cellSize + 'px',
+						height: tracker.options.cellSize + 'px'
+					}));
+				}
 				
-			})).start();
+				
+				// ==================================
+				// Инициализация треккера
+				var tracker = new MouseTracker({
+					// Параметры запроса к серверу
+					queryData: {
+						url: 'http://localhost/',
+						type: 'post',
+						data: {
+							userPhone: ''
+						}
+					},
+					
+					// интервал отправки запросов к серверу, ms
+					queryInterval: 1000,
+					
+					// Размер ячейки, px
+					cellSize: 50,
+		
+					// Функция, выполяемая по наведению на ячейку
+					onTrack: renderActiveCell
+					
+				});
+				
+				
+				// ==================================
+				// DOM События
+				// Запуск отслеживания
+				$('.tracker-start').click(function (e) {
+					e.preventDefault();
+					tracker.start();
+					
+					$(e.target).hide();
+					$('.tracker-stop').show();
+				});
+				
+				// Остановка отслеживания
+				$('.tracker-stop').click(function (e) {
+					e.preventDefault();
+					tracker.stop();
+					
+					$(e.target).hide();
+					$('.tracker-start').show();
+				});
+				
+				
+				// ==================================
+				// Вывод сетки
+				for (i = 0; i < tracker.options.queryData.data.cellsCountPerX; i++) {
+					$optionsPanel.before($('<div class="vertical-line">').css({
+						left: (i * tracker.options.cellSize) + 'px'
+					}));
+				}
+				for (i = 0; i < tracker.options.queryData.data.cellsCountPerY; i++) {
+					$optionsPanel.before($('<div class="horisontal-line">').css({
+						top: (i * tracker.options.cellSize) + 'px'
+					}));
+				}
+			});
 		</script>
 	</body>
 </html>
