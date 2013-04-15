@@ -118,6 +118,7 @@
 				// Запуск отслеживания
 				$('.tracker-start').click(function (e) {
 					e.preventDefault();
+					tracker.options.queryData.data.userPhone = $('[name="userPhone"]').val();
 					tracker.start();
 					
 					$(e.target).hide();
