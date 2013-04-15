@@ -58,7 +58,7 @@ window.MouseTracker.prototype = {
 			$(document).off('mousemove', this._tracker);
 		}
 		if (this._interval) {
-			window.clearInterval(this.interval);
+			window.clearInterval(this._interval);
 		}
 		
 		window._log('MouseTracker stopped');
@@ -77,10 +77,12 @@ window.MouseTracker.prototype = {
 		if(this._cellsIntervals.length) {
 			lastCell = this._cellsIntervals[this._cellsIntervals.length - 1];
 		}
+		
 		// выбрана та же ячейка - проставим ей время сведения курсора
 		if (lastCell && lastCell.x === cellPosition.x && lastCell.y === cellPosition.y) {
 			lastCell.outAt = (new Date()).valueOf();
 		} else {
+		
 			// новая ячейка
 			this._cellsIntervals.push({
 				x: cellPosition.x,
